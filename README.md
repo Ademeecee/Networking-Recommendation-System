@@ -1,5 +1,3 @@
-Absolutely. Here is the complete revised README.md, ready to replace your current file.
-
 # CyNam Intelligent Ecosystem Matchmaker
 [![Python 3.11](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110.0-009688.svg?logo=fastapi)](https://fastapi.tiangolo.com/)
@@ -407,30 +405,3 @@ The accompanying notebooks document the development process:
 5. Evaluation, Critical Analysis and Ethics
 
 Together they provide a reproducible record of the analytical methodology and modelling decisions.
-
-⸻
-
-Author
-
-Yemisi Adekola
-
-MSc Data Science
-
-This project demonstrates an applied machine learning workflow spanning data preparation, NLP, unsupervised learning, recommendation systems, API development, visualisation, testing, and deployment-oriented engineering.
-
-### After replacing the README
-Since the old README is already committed, run:
-```bash
-git add README.md
-git commit -m "Update project documentation"
-
-Then:
-
-git status
-
-You should get:
-
-On branch main
-nothing to commit, working tree clean
-
-Don’t push yet. After this documentation commit, we should quickly inspect the final commit history and the GitHub Actions workflow before the first push.
