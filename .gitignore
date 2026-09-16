@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment variables / secrets
+.env
+.env.*
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Raw and private datasets
+*.xlsx
+*.xls
+data/raw/
+
+# Processed / generated member data
+data/processed/
+data/artifacts/*.csv
+data/artifacts/cynam_members_prod.joblib
+
+# Temporary files
+*.tmp
+*.log
+.pytest_cache/

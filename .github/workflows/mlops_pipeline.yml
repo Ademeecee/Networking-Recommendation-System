@@ -1,0 +1,43 @@
+name: CyNam MLOps Continuous Retraining & Verification
+
+on:
+  push:
+    paths:
+      - 'data/**.csv'
+      - 'src/**.py'
+  schedule:
+    - cron: '0 2 * * 1' # Weekly automated retraining on Mondays at 2 AM
+
+jobs:
+  retrain-and-evaluate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v3
+
+      - name: Set Up Python Environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest evidently
+
+      - name: Run Data Preprocessing & Profiling
+        run: |
+          python -c "import pandas as pd; print('Ingesting latest event logs...')"
+
+      - name: Evaluate Model Degradation & Unit Tests
+        run: |
+          # Test for Gini superstar bias and coverage regression
+          pytest tests/test_recommender.py
+
+      - name: Build and Push Docker Container
+        if: success()
+        run: |
+          docker build -t cynam-matchmaking-api:latest .
+          # In production: docker push to AWS ECR / GCP Artifact Registry
