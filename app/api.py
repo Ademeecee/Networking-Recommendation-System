@@ -1,14 +1,10 @@
-"""
-Cyber Matchmaking & Networking REST API
-Production Inference Service
-"""
-
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, EmailStr
 from typing import List
 import numpy as np
 import pandas as pd
 import joblib
+import os
 from sklearn.metrics.pairwise import cosine_similarity
 
 
@@ -19,7 +15,7 @@ app = FastAPI(
 )
 
 # Global in-memory data store
-DATA_PATH = "data/artifacts/cynam_members_prod.joblib"
+DATA_PATH = os.getenv("CYNAM_DATA_PATH", "data/artifacts/demo_members.joblib")
 state = {}
 
 

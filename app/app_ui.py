@@ -1,10 +1,7 @@
-"""
-CyNam Ecosystem Matchmaker
-Streamlit User Interface
-"""
-
 from pathlib import Path
 import html
+import os
+import joblib
 
 import numpy as np
 import pandas as pd
@@ -12,18 +9,14 @@ import streamlit as st
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-# ============================================================
 # PATHS
-# ============================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data" / "artifacts"
 ASSETS_DIR = BASE_DIR / "assets"
 
 
-# ============================================================
 # PAGE CONFIGURATION
-# ============================================================
 
 st.set_page_config(
     page_title="CyNam Ecosystem Matchmaker",
@@ -33,9 +26,7 @@ st.set_page_config(
 )
 
 
-# ============================================================
 # CUSTOM CSS
-# ============================================================
 
 st.markdown(
     """
@@ -341,28 +332,37 @@ st.markdown(
 )
 
 
-# ============================================================
 # LOAD DATA
-# ============================================================
 
 @st.cache_data
 def load_data():
 
-    data_path = DATA_DIR / "clustered_member_profiles.csv"
+    # Public GitHub default: synthetic demo data.
+    # Local real-data use: set CYNAM_DATA_PATH to the private production artifact.
+    data_path = Path(
+        os.getenv(
+            "CYNAM_DATA_PATH",
+            str(DATA_DIR / "demo_members.joblib")
+        )
+    )
 
     if not data_path.exists():
         st.error(f"Data file not found: {data_path}")
         st.stop()
 
-    return pd.read_csv(data_path)
+    data = joblib.load(data_path)
+
+    if not isinstance(data, pd.DataFrame):
+        st.error("The loaded data artifact is not a pandas DataFrame.")
+        st.stop()
+
+    return data
 
 
 df = load_data()
 
 
-# ============================================================
 # FEATURE MATRICES
-# ============================================================
 
 tfidf_cols = [
     c for c in df.columns
@@ -388,9 +388,7 @@ orgs = (
 )
 
 
-# ============================================================
 # HELPER FUNCTIONS
-# ============================================================
 
 def safe_text(value, fallback="Unknown"):
     """Convert a dataframe value to safe display text."""
@@ -494,9 +492,7 @@ def calculate_rationale(
     )
 
 
-# ============================================================
 # HEADER
-# ============================================================
 
 st.markdown(
     """
@@ -515,9 +511,7 @@ st.markdown(
 )
 
 
-# ============================================================
 # SIDEBAR
-# ============================================================
 
 st.sidebar.markdown(
     """
@@ -624,9 +618,7 @@ clustering to identify potential connections.
 )
 
 
-# ============================================================
 # ACTIVE PROFILE
-# ============================================================
 
 st.markdown(
     '<div class="section-heading">👤 Your Active Profile</div>',
@@ -699,9 +691,7 @@ st.markdown(
 )
 
 
-# ============================================================
 # CALCULATE SIMILARITIES
-# ============================================================
 
 sim_int = cosine_similarity(
     X_tfidf[selected_idx:selected_idx + 1],
@@ -722,9 +712,7 @@ target_sector = (
 )
 
 
-# ============================================================
 # SECTOR SCORING
-# ============================================================
 
 if mode == "Cross-Sector Innovation":
 
@@ -738,9 +726,7 @@ if mode == "Cross-Sector Innovation":
         sim_sec = np.zeros_like(sim_sec)
 
 
-# ============================================================
 # SENIORITY SCORING
-# ============================================================
 
 target_sen = X_sen[selected_idx]
 
@@ -762,9 +748,7 @@ else:
     )
 
 
-# ============================================================
 # COMPOSITE SCORE
-# ============================================================
 
 scores = (
     0.50 * sim_int
@@ -773,9 +757,7 @@ scores = (
 )
 
 
-# ============================================================
 # SERENDIPITY
-# ============================================================
 
 if serendipity > 0:
 
@@ -794,9 +776,7 @@ if serendipity > 0:
     )
 
 
-# ============================================================
 # BUSINESS CONSTRAINTS
-# ============================================================
 
 # Never recommend the active member.
 scores[selected_idx] = -np.inf
@@ -812,9 +792,7 @@ if target_org:
     ] = -np.inf
 
 
-# ============================================================
 # SELECT TOP RECOMMENDATIONS
-# ============================================================
 
 eligible_indices = np.where(
     np.isfinite(scores)
@@ -828,9 +806,7 @@ top_indices = eligible_indices[
 ]
 
 
-# ============================================================
 # RECOMMENDATION HEADER
-# ============================================================
 
 st.markdown(
     '<div class="section-heading">👥 Recommended Connections</div>',
@@ -844,9 +820,7 @@ st.markdown(
 )
 
 
-# ============================================================
 # RECOMMENDATION CARDS
-# ============================================================
 
 if len(top_indices) == 0:
 
@@ -864,9 +838,7 @@ else:
 
         match_row = df.iloc[idx]
 
-        # --------------------------------------------------------
         # Values
-        # --------------------------------------------------------
 
         full_name_raw = (
             str(match_row["full_name"])
@@ -919,9 +891,7 @@ else:
             full_name_raw
         )
 
-        # --------------------------------------------------------
         # Rationale
-        # --------------------------------------------------------
 
         rationale = calculate_rationale(
             mode=mode,
@@ -954,9 +924,7 @@ else:
             rationale
         )
 
-        # --------------------------------------------------------
         # Card
-        # --------------------------------------------------------
 
         card_html = (
             f'<div class="recommendation-card">'
@@ -1019,9 +987,7 @@ else:
                 )
 
 
-# ============================================================
 # ECOSYSTEM HEALTH & STRATEGIC INSIGHTS
-# ============================================================
 
 st.divider()
 
@@ -1032,15 +998,11 @@ st.caption(
     "and innovation ecosystem"
 )
 
-# ============================================================
 # VISUALISATIONS
-# ============================================================
 
 col1, col2 = st.columns(2)
 
-# ------------------------------------------------------------
 # ECOSYSTEM CLUSTERS
-# ------------------------------------------------------------
 
 with col1:
 
@@ -1063,9 +1025,7 @@ with col1:
         )
 
 
-# ------------------------------------------------------------
 # THEMATIC ENGAGEMENT
-# ------------------------------------------------------------
 
 with col2:
 
@@ -1090,9 +1050,7 @@ with col2:
         )
 
 
-# ============================================================
 # ECOSYSTEM INSIGHT
-# ============================================================
 
 st.markdown("---")
 

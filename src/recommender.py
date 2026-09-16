@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import joblib
 from sklearn.metrics.pairwise import cosine_similarity
 
 
@@ -8,7 +9,12 @@ class CyNamRecommender:
         if isinstance(data_path, pd.DataFrame):
             self.data = data_path.copy().reset_index(drop=True)
         else:
-            self.data = pd.read_csv(data_path).reset_index(drop=True)
+            if str(data_path).endswith('.joblib'):
+                self.data = joblib.load(data_path)
+            else:
+                self.data = pd.read_csv(data_path)
+
+            self.data = self.data.reset_index(drop=True)
 
         self.tfidf_cols = [
             c for c in self.data.columns if c.startswith('tfidf_')]

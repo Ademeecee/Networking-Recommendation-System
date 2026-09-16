@@ -2,7 +2,7 @@ from src.recommender import CyNamRecommender
 
 # Load the real clustered dataset
 recommender = CyNamRecommender(
-    data_path='data/artifacts/clustered_member_profiles.csv')
+    data_path='data/artifacts/demo_members.joblib')
 print(f'Loaded {len(recommender.data)} member profiles for testing.')
 
 # Pick a real member from the dataset for testing

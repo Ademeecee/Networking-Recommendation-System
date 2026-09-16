@@ -1,7 +1,7 @@
 import pandas as pd
 from src.recommender import CyNamRecommender
 
-DATA_PATH = 'data/artifacts/clustered_member_profiles.csv'
+DATA_PATH = 'data/artifacts/demo_members.joblib'
 
 
 def validate_recommendations():
