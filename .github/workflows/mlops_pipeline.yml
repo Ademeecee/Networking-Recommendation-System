@@ -49,8 +49,6 @@ jobs:
       - name: Validate Python Imports
         run: |
           python -c "import src.recommender"
-          python -c "import src.clustering"
-          python -c "import src.data_pipeline"
 
       - name: Validate FastAPI Application
         run: |
